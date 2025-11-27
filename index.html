@@ -1,30 +1,16 @@
-.time{font-size:12px;color:var(--sub);min-width:40px}
-</style>
-</head>
-<body>
-<div class="app">
-<aside class="sidebar">
-<div class="logo">MusicStream AI</div>
-<div class="nav-item active"><i class="fas fa-home"></i> Home</div>
-<div class="nav-item"><i class="fas fa-search"></i> Search</div>
-<div class="nav-item"><i class="fas fa-music"></i> Library</div>
-</aside>
-<main class="main">
-<h1>AI Generated Music</h1>
-<div class="grid">
-<div class="card" onclick="playTrack(0)"><div class="cover">🌃</div><div class="info"><div class="title">Neon Dreams</div><div class="subtitle">Synthwave</div></div></div>
-<div class="card" onclick="playTrack(1)"><div class="cover">☕</div><div class="info"><div class="title">Coffee Shop</div><div class="subtitle">Lo-fi Beats</div></div></div>
-<div class="card" onclick="playTrack(2)"><div class="cover">🌧️</div><div class="info"><div class="title">Digital Rain</div><div class="subtitle">Ambient</div></div></div>
-<div class="card" onclick="playTrack(3)"><div class="cover">🏔️</div><div class="info"><div class="title">Mountain Echo</div><div class="subtitle">Orchestral</div></div></div>
-<div class="card" onclick="playTrack(4)"><div class="cover">🎷</div><div class="info"><div class="title">Jazz Café</div><div class="subtitle">Smooth Jazz</div></div></div>
+<div class="card" onclick="playTrack(0)"><div class="cover">Neon</div><div class="info"><div class="title">Neon Dreams</div><div class="subtitle">Synthwave · 3:12</div></div></div>
+<div class="card" onclick="playTrack(1)"><div class="cover">Coffee</div><div class="info"><div class="title">Coffee Shop</div><div class="subtitle">Lo-fi Beats · 2:48</div></div></div>
+<div class="card" onclick="playTrack(2)"><div class="cover">Rain</div><div class="info"><div class="title">Digital Rain</div><div class="subtitle">Ambient · 4:05</div></div></div>
+<div class="card" onclick="playTrack(3)"><div class="cover">Mountain</div><div class="info"><div class="title">Mountain Echo</div><div class="subtitle">Orchestral · 3:30</div></div></div>
+<div class="card" onclick="playTrack(4)"><div class="cover">Jazz</div><div class="info"><div class="title">Jazz Café</div><div class="subtitle">Smooth Jazz · 3:18</div></div></div>
 </div>
 </main>
 </div>
 
 <div class="player">
 <div class="track-info">
-<div class="album" id="albumArt">🎵</div>
-<div><div class="title" id="trackTitle">Select a track to play</div><div class="subtitle">AI Generated</div></div>
+<div class="album" id="albumArt">Music</div>
+<div><div class="title" id="trackTitle">Select a track</div><div class="subtitle">AI Generated</div></div>
 </div>
 <div class="controls">
 <button class="btn" onclick="prevTrack()"><i class="fas fa-step-backward"></i></button>
@@ -42,66 +28,51 @@
 
 <script>
 const tracks = [
-{title: "Neon Dreams", emoji: "🌃", src: "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav"},
-{title: "Coffee Shop", emoji: "☕", src: "https://www.soundjay.com/human/sounds/laughing-1.wav"},
-{title: "Digital Rain", emoji: "🌧️", src: "https://www.soundjay.com/nature/sounds/rain-1.wav"},
-{title: "Mountain Echo", emoji: "🏔️", src: "https://www.soundjay.com/nature/sounds/wind-2.wav"},
-{title: "Jazz Café", emoji: "🎷", src: "https://www.soundjay.com/misc/sounds/notification-3.wav"}
+{title:"Neon Dreams", emoji:"Neon", src:"https://cdn.pixabay.com/download/audio/2024/03/15/audio_5cb0c1e7b9.mp3?filename=neon-dreams-194567.mp3"},
+{title:"Coffee Shop", emoji:"Coffee", src:"https://cdn.pixabay.com/download/audio/2024/01/26/audio_8c15e2f3f1.mp3?filename=lofi-study-112191.mp3"},
+{title:"Digital Rain", emoji:"Rain", src:"https://cdn.pixabay.com/download/audio/2023/11/10/audio_5f0c1d9e5a.mp3?filename=ambient-rain-144410.mp3"},
+{title:"Mountain Echo", emoji:"Mountain", src:"https://cdn.pixabay.com/download/audio/2024/02/20/audio_2d1e5c8c8d.mp3?filename=epic-orchestral-144368.mp3"},
+{title:"Jazz Café", emoji:"Jazz", src:"https://cdn.pixabay.com/download/audio/2023/08/23/audio_8e0f7c8d3f.mp3?filename=jazz-cafe-143704.mp3"}
 ];
 let currentTrackIndex = -1;
 const audio = document.getElementById('audioPlayer');
 const playIcon = document.querySelector('#playBtn i');
 
 function playTrack(index) {
-if (index === currentTrackIndex) return togglePlay();
 currentTrackIndex = index;
 audio.src = tracks[index].src;
+audio.play();
 document.getElementById('trackTitle').textContent = tracks[index].title;
 document.getElementById('albumArt').textContent = tracks[index].emoji;
-audio.play();
 playIcon.classList.replace('fa-play', 'fa-pause');
-updateProgress();
 }
-
 function togglePlay() {
-if (currentTrackIndex === -1) return playTrack(0);
-if (audio.paused) {
-audio.play();
-playIcon.classList.replace('fa-play', 'fa-pause');
-} else {
-audio.pause();
-playIcon.classList.replace('fa-pause', 'fa-play');
+if (audio.paused) audio.play(); else audio.pause();
+playIcon.classList.toggle('fa-play');
+playIcon.classList.toggle('fa-pause');
 }
-}
-
 function prevTrack() { playTrack((currentTrackIndex - 1 + tracks.length) % tracks.length); }
 function nextTrack() { playTrack((currentTrackIndex + 1) % tracks.length); }
 
-audio.addEventListener('timeupdate', updateProgress);
-audio.addEventListener('loadedmetadata', () => {
-document.getElementById('totalTime').textContent = formatTime(audio.duration);
-});
-audio.addEventListener('ended', nextTrack);
-
-function updateProgress() {
+audio.addEventListener('timeupdate', () => {
 if (audio.duration) {
 const progress = (audio.currentTime / audio.duration) * 100;
 document.getElementById('progressFill').style.width = progress + '%';
 document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+document.getElementById('totalTime').textContent = formatTime(audio.duration);
 }
-}
+});
+audio.addEventListener('ended', nextTrack);
 
 function formatTime(seconds) {
 if (isNaN(seconds)) return '0:00';
-const mins = Math.floor(seconds / 60);
-const secs = Math.floor(seconds % 60);
-return `${mins}:${secs.toString().padStart(2, '0')}`;
+const m = Math.floor(seconds / 60);
+const s = Math.floor(seconds % 60);
+return m + ':' + (s < 10 ? '0' : '') + s;
 }
-
-function seek(event) {
-const bar = event.currentTarget;
-const rect = bar.getBoundingClientRect();
-const pos = (event.clientX - rect.left) / rect.width;
+function seek(e) {
+const rect = e.currentTarget.getBoundingClientRect();
+const pos = (e.clientX - rect.left) / rect.width;
 audio.currentTime = pos * audio.duration;
 }
 </script>
