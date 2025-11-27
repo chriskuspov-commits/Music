@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MusicStream AI</title>
+<style>
+:root{--primary-green:#1db954;--dark-bg:#121212;--darker-bg:#000;--text-primary:#fff;--text-secondary:#b3b3b3;--hover-bg:#282828}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--dark-bg);color:var(--text-primary);overflow:hidden;height:100vh;display:flex;flex-direction:column}
+.app-container{display:flex;flex:1;overflow:hidden}
+.sidebar{width:240px;background:var(--darker-bg);padding:24px 12px}
+.logo{font-size:24px;font-weight:bold;color:var(--primary-green)}
+.nav-item{padding:12px;border-radius:8px;cursor:pointer;color:var(--text-secondary);background:none;border:none;font-size:14px;width:100%;text-align:left}
+.nav-item.active,.nav-item:hover{color:var(--text-primary);background:var(--hover-bg)}
+.main-content{flex:1;overflow-y:auto;padding:32px;background:linear-gradient(to bottom,#1a1a1a 0,var(--dark-bg) 100%)}
+.section-title{font-size:32px;font-weight:bold;margin-bottom:24px}
+.grid-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:24px;margin-bottom:48px}
+.card{background:#181818;border-radius:8px;padding:16px;cursor:pointer;transition:all .3s}
+.card:hover{background:var(--hover-bg);transform:translateY(-4px)}
+.card-image{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--primary-green) 0,#191414 100%);border-radius:4px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;font-size:48px}
+.card-title{font-size:16px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-subtitle{font-size:14px;color:var(--text-secondary)}
+.search-box{width:100%;max-width:600px;padding:12px 24px;border-radius:24px;background:#181818;border:none;color:var(--text-primary);font-size:16px;margin-bottom:32px}
+.now-playing-bar{height:90px;background:var(--darker-bg);border-top:1px solid var(--hover-bg);display:flex;align-items:center;padding:0 16px;justify-content:space-between}
+.now-playing-cover{width:56px;height:56px;background:linear-gradient(135deg,var(--primary-green) 0,#191414 100%);border-radius:4px;margin-right:14px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.now-playing-title{font-size:14px;font-weight:500}
+.now-playing-artist{font-size:12px;color:var(--text-secondary)}
+.player-controls{display:flex;align-items:center;gap:16px}
+.control-btn{background:none;border:none;color:var(--text-secondary);cursor:pointer;padding:8px}
+.control-btn:hover{color:var(--text-primary);transform:scale(1.1)}
+.play-btn{background:var(--text-primary);color:var(--darker-bg);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center}
+.progress-container{display:flex;align-items:center;width:100%;gap:8px;max-width:600px}
+.time{font-size:12px;color:var(--text-secondary);min-width:40px}
+.progress-bar{flex:1;height:4px;background:var(--hover-bg);border-radius:2px;cursor:pointer}
+.progress-fill{height:100%;background:var(--text-primary);border-radius:2px;width:0;transition:width .1s}
+.volume-container{display:flex;align-items:center;gap:8px;width:120px}
+.volume-bar{flex:1;height:4px;background:var(--hover-bg);border-radius:2px;cursor:pointer}
+.volume-fill{height:100%;background:var(--text-primary);border-radius:2px;width:70%}
+.icon{width:24px;height:24px;fill:currentColor}
+.lyrics-panel{background:#0a0a0a;border-radius:12px;padding:32px;margin-top:32px;max-height:400px;overflow-y:auto;display:none}
+.lyrics-line{padding:12px 0;transition:all .3s;border-left:3px solid transparent;padding-left:16px}
+.lyrics-line.active{color:var(--text-primary);font-weight:600;border-left-color:var(--primary-green);background:rgba(29,185,84,.1)}
+.lyrics-toggle{background:var(--primary-green);color:var(--darker-bg);border:none;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="app-container">
+<aside class="sidebar">
+<div class="logo">🎵 MusicStream AI</div>
+<nav>
+<button class="nav-item active">Home</button>
+<button class="nav-item" onclick="alert('Search coming soon')">Search</button>
+<button class="nav-item" onclick="alert('Library coming soon')">Library</button>
+</nav>
+</aside>
+<main class="main-content">
+<h1 class="section-title">AI Generated Music</h1>
+<div class="grid-container">
+<div class="card" onclick="playTrack(1)">
+<div class="card-image">🌃</div>
+<div class="card-title">Neon Dreams</div>
+<div class="card-subtitle">Synthwave</div>
+</div>
+<div class="card" onclick="playTrack(2)">
+<div class="card-image">☕</div>
+<div class="card-title">Coffee Shop</div>
+<div class="card-subtitle">Lo-fi</div>
+</div>
+<div class="card" onclick="playTrack(3)">
+<div class="card-image">🌧️</div>
+<div class="card-title">Digital Rain</div>
+<div class="card-subtitle">Ambient</div>
+</div>
+<div class="card" onclick="playTrack(4)">
+<div class="card-image">🏔️</div>
+<div class="card-title">Mountain Echo</div>
+<div class="card-subtitle">Orchestral</div>
+</div>
+<div class="card" onclick="playTrack(5)">
+<div class="card-image">🎷</div>
+<div class="card-title">Jazz Cafe</div>
+<div class="card-subtitle">Jazz</div>
+</div>
+</div>
+</main>
+</div>
+<div class="now-playing-bar">
+<div class="now-playing-cover" id="cover">🎵</div>
+<div class="now-playing-info">
+<div class="now-playing-title" id="title">Select a track to play</div>
+<div class="now-playing-artist">AI Generated</div>
+<button class="lyrics-toggle" onclick="showLyrics()" style="display:none" id="lyricsBtn">Show Lyrics</button>
+</div>
+<div class="now-playing-center">
+<div class="player-controls">
+<button class="control-btn" onclick="previousTrack()">⏮</button>
+<button class="control-btn play-btn" onclick="togglePlay()"><span id="playIcon">▶</span></button>
+<button class="control-btn" onclick="nextTrack()">⏭</button>
+</div>
+<div class="progress-container">
+<span class="time" id="currentTime">0:00</span>
+<div class="progress-bar" onclick="seek(event)"><div class="progress-fill" id="progress"></div></div>
+<span class="time" id="totalTime">0:00</span>
+</div>
+</div>
+</div>
+<div class="lyrics-panel" id="lyrics">
+<div class="lyrics-header">
+<div class="lyrics-title" id="lyricsTitle">Lyrics</div>
+<button onclick="closeLyrics()">✕</button>
+</div>
+<div class="lyrics-content" id="lyricsContent"></div>
+</div>
+<script>
+let audioContext,currentTrack=null,isPlaying=false,progress=0,interval=null;
+const tracks={1:{title:"Neon Dreams",duration:75,lyrics:["Driving through the city lights","Neon signs are burning bright","80s dreams in digital streams","The future's not what it seems","Neon dreams, electric heart","We've been falling apart"]},2:{title:"Coffee Shop",duration:71,lyrics:["Rain on the window, steam from my cup","Got my headphones on, volume turned up","Old school beats while the world goes by","Time moves slow, don't need to try","In this corner with my thoughts","Writing rhymes, connecting dots"]},3:{title:"Digital Rain",duration:83,lyrics:["Floating... Glitching... Drifting...","Pixels fall like water drops","Codes and dreams in endless loops","Ambient light in digital dark","Synthetic peace... electric heart"]},4:{title:"Mountain Echo",duration:74,lyrics:["High above the world we stand","Rock and stone, and air so clear","Voices ring across the land","An echo that the mountains hear","Oh-oh-oh, the valley calls","Oh-oh-oh, the water falls"]},5:{title:"Jazz Cafe",duration:69,lyrics:["In a smoky room, beneath dim lights","The piano plays through Friday night","Whiskey sours and conversation","Improvisation, no hesitation","Welcome to the Jazz Cafe","Where the blues just melt away"]}};
+function playTrack(id){if(!audioContext){audioContext=new(window.AudioContext||window.webkitAudioContext)();if(audioContext.state==='suspended')audioContext.resume()}currentTrack={id:id,...tracks[id],startTime:audioContext.currentTime,pausedAt:0};isPlaying=true;updateUI();interval=setInterval(updateProgress,100)}
+function togglePlay(){if(!currentTrack)return;isPlaying=!isPlaying;if(isPlaying){currentTrack.startTime=audioContext.currentTime-currentTrack.pausedAt;interval=setInterval(updateProgress,100)}else{currentTrack.pausedAt=audioContext.currentTime-currentTrack.startTime;clearInterval(interval)}document.getElementById('playIcon').textContent=isPlaying?'⏸':'▶'}
+function updateProgress(){if(!currentTrack||!isPlaying)return;const elapsed=audioContext.currentTime-currentTrack.startTime;progress=Math.min(elapsed/currentTrack.duration,1);document.getElementById('currentTime').textContent=formatTime(elapsed);document.getElementById('progress').style.width=(progress*100)+'%';if(progress>=1){nextTrack()}}
+function formatTime(sec){const m=Math.floor(sec/60),s=Math.floor(sec%60);return m+':'+s.toString().padStart(2,'0')}
+function previousTrack(){const id=currentTrack?((currentTrack.id-2+5)%5+1):5;playTrack(id)}
+function nextTrack(){const id=currentTrack?((currentTrack.id)%5+1):1;playTrack(id)}
+function seek(e){if(!currentTrack)return;const rect=e.target.getBoundingClientRect();const pct=(e.clientX-rect.left)/rect.width;currentTrack.pausedAt=pct*currentTrack.duration;currentTrack.startTime=audioContext.currentTime-currentTrack.pausedAt}
+function updateUI(){if(!currentTrack)return;document.getElementById('title').textContent=currentTrack.title;document.getElementById('totalTime').textContent=formatTime(currentTrack.duration);document.getElementById('cover').textContent=['🌃','☕','🌧️','🏔️','🎷'][currentTrack.id-1];document.getElementById('lyricsBtn').style.display='block';document.getElementById('lyricsTitle').textContent=currentTrack.title+' - Lyrics';displayLyrics()}
+function showLyrics(){document.getElementById('lyrics').style.display='block';if(interval)clearInterval(interval);interval=setInterval(updateLyricsSync,100)}
+function closeLyrics(){document.getElementById('lyrics').style.display='none';if(interval)clearInterval(interval);interval=setInterval(updateProgress,100)}
+function displayLyrics(){const content=document.getElementById('lyricsContent');content.innerHTML=currentTrack.lyrics.map(line=>`<div class="lyrics-line">${line}</div>`).join('')}
+function updateLyricsSync(){if(!currentTrack||!isPlaying)return;const elapsed=audioContext.currentTime-currentTrack.startTime;const lines=document.querySelectorAll('.lyrics-line');const activeIndex=Math.floor(elapsed/10)%lines.length;lines.forEach((line,i)=>line.classList.toggle('active',i===activeIndex))}
+</script>
+</body>
+</html>
