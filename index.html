@@ -1,36 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MusicStream AI</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-<style>
-:root{--green:#1ed760;--bg:#121212;--dark:#000;--card:#181818;--hover:#282828;--text:#fff;--sub:#b3b3b3}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
-.app{display:flex;flex:1;overflow:hidden}
-.sidebar{width:240px;background:var(--dark);padding:20px;display:flex;flex-direction:column;gap:30px}
-.logo{font-size:28px;font-weight:900;color:var(--green)}
-.nav-item{padding:12px 16px;border-radius:8px;cursor:pointer;font-weight:600;color:var(--sub);transition:.3s;display:flex;align-items:center;gap:16px}
-.nav-item:hover,.nav-item.active{background:var(--hover);color:var(--text)}
-.main{flex:1;overflow-y:auto;padding:40px;background:linear-gradient(to bottom,#1f1f1f 0%,var(--bg) 30%)}
-h1{font-size:42px;font-weight:900;background:linear-gradient(90deg,#1ed760,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:30px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:24px}
-.card{background:var(--card);border-radius:12px;overflow:hidden;cursor:pointer;transition:.4s;box-shadow:0 8px 24px rgba(0,0,0,.5)}
-.card:hover{transform:translateY(-10px);background:var(--hover);box-shadow:0 20px 40px rgba(30,215,96,.2)}
-.cover{height:200px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:80px;position:relative;overflow:hidden}
-.cover::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent,rgba(0,0,0,.7))}
-.info{padding:16px}
-.title{font-size:16px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.subtitle{color:var(--sub);font-size:14px}
-.player{height:90px;background:var(--dark);border-top:1px solid #333;display:flex;align-items:center;padding:0 16px;justify-content:space-between;position:relative;z-index:10}
-.track-info{display:flex;align-items:center;gap:14px}
-.album{width:56px;height:56px;border-radius:8px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:28px}
-.controls{display:flex;align-items:center;gap:20px}
-.btn{background:none;border:none;color:var(--sub);font-size:24px;cursor:pointer;transition:.2s}
-.btn:hover{color:var(--text);transform:scale(1.1)}
-.play{background:var(--text);color:var(--dark);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
-.progress{display:flex;align-items:center;gap:10px;flex:1;max-width:500px}
-.bar{height:4px;background:#404040;border-radius:2px;flex:1;cursor:pointer;position:relative}
-.fill{height:100%;background:var(--green);border-radius:2px;width:0;transition:width .1s
+.time{font-size:12px;color:var(--sub);min-width:40px}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="logo">MusicStream AI</div>
+<div class="nav-item active"><i class="fas fa-home"></i> Home</div>
+<div class="nav-item"><i class="fas fa-search"></i> Search</div>
+<div class="nav-item"><i class="fas fa-music"></i> Library</div>
+</aside>
+<main class="main">
+<h1>AI Generated Music</h1>
+<div class="grid">
+<div class="card" onclick="playTrack(0)"><div class="cover">🌃</div><div class="info"><div class="title">Neon Dreams</div><div class="subtitle">Synthwave</div></div></div>
+<div class="card" onclick="playTrack(1)"><div class="cover">☕</div><div class="info"><div class="title">Coffee Shop</div><div class="subtitle">Lo-fi Beats</div></div></div>
+<div class="card" onclick="playTrack(2)"><div class="cover">🌧️</div><div class="info"><div class="title">Digital Rain</div><div class="subtitle">Ambient</div></div></div>
+<div class="card" onclick="playTrack(3)"><div class="cover">🏔️</div><div class="info"><div class="title">Mountain Echo</div><div class="subtitle">Orchestral</div></div></div>
+<div class="card" onclick="playTrack(4)"><div class="cover">🎷</div><div class="info"><div class="title">Jazz Café</div><div class="subtitle">Smooth Jazz</div></div></div>
+</div>
+</main>
+</div>
+
+<div class="player">
+<div class="track-info">
+<div class="album" id="albumArt">🎵</div>
+<div><div class="title" id="trackTitle">Select a track to play</div><div class="subtitle">AI Generated</div></div>
+</div>
+<div class="controls">
+<button class="btn" onclick="prevTrack()"><i class="fas fa-step-backward"></i></button>
+<button class="btn play" id="playBtn" onclick="togglePlay()"><i class="fas fa-play"></i></button>
+<button class="btn" onclick="nextTrack()"><i class="fas fa-step-forward"></i></button>
+</div>
+<div class="progress">
+<span class="time" id="currentTime">0:00</span>
+<div class="bar" onclick="seek(event)"><div class="fill" id="progressFill"></div></div>
+<span class="time" id="totalTime">0:00</span>
+</div>
+</div>
+
+<audio id="audioPlayer" preload="auto"></audio>
+
+<script>
+const tracks = [
+{title: "Neon Dreams", emoji: "🌃", src: "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav"},
+{title: "Coffee Shop", emoji: "☕", src: "https://www.soundjay.com/human/sounds/laughing-1.wav"},
+{title: "Digital Rain", emoji: "🌧️", src: "https://www.soundjay.com/nature/sounds/rain-1.wav"},
+{title: "Mountain Echo", emoji: "🏔️", src: "https://www.soundjay.com/nature/sounds/wind-2.wav"},
+{title: "Jazz Café", emoji: "🎷", src: "https://www.soundjay.com/misc/sounds/notification-3.wav"}
+];
+let currentTrackIndex = -1;
+const audio = document.getElementById('audioPlayer');
+const playIcon = document.querySelector('#playBtn i');
+
+function playTrack(index) {
+if (index === currentTrackIndex) return togglePlay();
+currentTrackIndex = index;
+audio.src = tracks[index].src;
+document.getElementById('trackTitle').textContent = tracks[index].title;
+document.getElementById('albumArt').textContent = tracks[index].emoji;
+audio.play();
+playIcon.classList.replace('fa-play', 'fa-pause');
+updateProgress();
+}
+
+function togglePlay() {
+if (currentTrackIndex === -1) return playTrack(0);
+if (audio.paused) {
+audio.play();
+playIcon.classList.replace('fa-play', 'fa-pause');
+} else {
+audio.pause();
+playIcon.classList.replace('fa-pause', 'fa-play');
+}
+}
+
+function prevTrack() { playTrack((currentTrackIndex - 1 + tracks.length) % tracks.length); }
+function nextTrack() { playTrack((currentTrackIndex + 1) % tracks.length); }
+
+audio.addEventListener('timeupdate', updateProgress);
+audio.addEventListener('loadedmetadata', () => {
+document.getElementById('totalTime').textContent = formatTime(audio.duration);
+});
+audio.addEventListener('ended', nextTrack);
+
+function updateProgress() {
+if (audio.duration) {
+const progress = (audio.currentTime / audio.duration) * 100;
+document.getElementById('progressFill').style.width = progress + '%';
+document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+}
+}
+
+function formatTime(seconds) {
+if (isNaN(seconds)) return '0:00';
+const mins = Math.floor(seconds / 60);
+const secs = Math.floor(seconds % 60);
+return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function seek(event) {
+const bar = event.currentTarget;
+const rect = bar.getBoundingClientRect();
+const pos = (event.clientX - rect.left) / rect.width;
+audio.currentTime = pos * audio.duration;
+}
+</script>
+</body>
+</html>
